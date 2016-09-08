@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="springmvc03-modelandview"
+  id="myeclipse.1469628289724"
+  context-root="/springmvc03-modelandview"
+  j2ee-spec="6.0"
+  archive="springmvc03-modelandview.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

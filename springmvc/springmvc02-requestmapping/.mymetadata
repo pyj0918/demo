@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="springmvc02-requestmapping"
+  id="myeclipse.1469628289724"
+  context-root="/springmvc02-requestmapping"
+  j2ee-spec="6.0"
+  archive="springmvc02-requestmapping.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+
