@@ -21,5 +21,7 @@
 	<mappers>
 		<mapper resource="com/test1/userMapper.xml" />
 		<mapper resource="com/test2/userMapper.xml" />
+		<!-- 使用注解的方式，也要进行注册 -->
+		<mapper class="com.test3.UserMapper"/>
 	</mappers>	
 </configuration>

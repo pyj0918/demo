@@ -21,9 +21,9 @@
 		select *
 		from user where id=#{id}
 	</select>
-	
+
 	<!-- 结果类型如何指定？ -->
-	<select id="getAll">
+	<select id="getAll" resultType="com.test1.User">
 		select * from user
 	</select>
 </mapper>
