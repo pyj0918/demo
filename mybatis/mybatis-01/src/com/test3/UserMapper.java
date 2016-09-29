@@ -2,7 +2,7 @@ package com.test3;
 
 import org.apache.ibatis.annotations.Insert;
 
-import com.test1.User;
+import com.bean.User;
 
 /**
  * 使用注解的方式

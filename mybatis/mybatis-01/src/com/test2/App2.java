@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
-import com.test1.User;
+import com.bean.User;
 import com.util.MyBatisUtil;
 
 public class App2 {
@@ -30,8 +30,7 @@ public class App2 {
 	public void testUpdate() {
 		// 默认手动提交
 		SqlSession session = MyBatisUtil.getFactory().openSession();
-		int row = session.update("com.test2.userMapper.updateUser", new User(7,
-				"daye", 333));
+		int row = session.update("com.test2.userMapper.updateUser", new User(7,"daye", 333));
 		session.commit();
 		session.close();
 		System.out.println(row);

@@ -1,18 +1,13 @@
-package com.test1;
+package com.bean;
 
-/**
- * ΚµΜε
- * 
- * @author Administrator
- * 
- */
-public class User {
+import java.io.Serializable;
+
+public class CUser implements Serializable{
+
+	private static final long serialVersionUID = -1302561083253432998L;
 	private int id;
 	private String name;
 	private int age;
-
-	public User() {
-	}
 
 	public int getId() {
 		return id;
@@ -40,14 +35,18 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", age=" + age + "]";
+		return "CUser [id=" + id + ", name=" + name + ", age=" + age + "]";
 	}
 
-	public User(int id, String name, int age) {
+	public CUser(int id, String name, int age) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.age = age;
+	}
+	
+	public CUser() {
+		super();
 	}
 
 }

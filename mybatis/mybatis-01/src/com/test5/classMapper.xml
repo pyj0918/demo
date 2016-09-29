@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test5.classMapper">
+
+	<!-- 根据班级id,查询班级信息（带老师信息） 方式 一：联表查询 方式二：执行两次查询 -->
+
+	<!-- 方式一：嵌套结果：使用结果映射来处理重复的联合结果的子集 封装联表查询的数据（去除重复的数据） -->
+	<select id="getClass" parameterType="int" resultMap="getClassMap">
+		select *
+		from class c,teacher t where c.teacher_id=t.t_id and c.c_id=#{id}
+	</select>
+	<resultMap type="com.bean.Classes" id="getClassMap">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />
+		<!-- 关联教师 (这里是重点) -->
+		<association property="teacher" javaType="com.bean.Teacher">
+			<id property="id" column="t_id" />
+			<result property="name" column="t_name" />
+		</association>
+	</resultMap>
+
+	<!-- 方式二：执行多次查询 -->
+	<select id="getClass2" parameterType="int" resultMap="getClassMap2">
+		select *
+		from class where c_id=#{id}
+	</select>
+	<select id="getTeacher" parameterType="int" resultType="com.bean.Teacher">
+		select t_id id,t_name name 
+		from teacher where t_id=#{id}
+	</select>
+	<resultMap type="com.bean.Classes" id="getClassMap2">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />
+		<!-- 这里是重点 -->
+		<association property="teacher" column="teacher_id" select="getTeacher"></association>
+	</resultMap>
+	
+	<!-- 
+	
+		备注：
+		association：用于一对一的关联查询
+		
+		property:对象属性的名称
+		javaType:对象属性的类型
+		
+		column:所对应的外键字段名称
+		select:使用另一个查询封装的结果
+		
+	 -->
+</mapper>

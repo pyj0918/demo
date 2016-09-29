@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace:必须与对应的接口全类名一致 
+insert的id:必须与对应接口的某个对应的方法名一致
+-->
+<mapper namespace="com.test.mapper.UserMapper">
+
+	<insert id="save" parameterType="UserEntity">
+		insert into s_user (user_name,user_birthday,user_salary) values
+		(#{name},#{birthday},#{salary})
+	</insert>
+
+	 <!-- <delete id="delete" parameterType="int">
+		delete from s_user where user_id=#{id}
+	</delete>
+
+	<update id="update" parameterType="User">
+		update s_user set user_name=#{name},user_birthday=#{birthday},user_salary=#{salary} where user_id=#{id}
+	</update>
+
+	<select id="findById" parameterType="int" resultMap="getUser">
+		select * from s_user where user_id=#{id}
+	</select>
+	
+	<select id="findAll" resultMap="getUser">
+		select * from s_user
+	</select>
+	
+	<resultMap type="User" id="getUser">
+		<id property="id" column="user_id"  />
+		<result property="name" column="user_name" />
+		<result property="birthday" column="user_birthday" />
+		<result property="salary" column="user_salary" />
+	</resultMap> -->
+</mapper>

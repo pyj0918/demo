@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test6.classMapper">
+
+	<!-- 根据班级id,查询班级,学生，老师 -->
+
+
+	<!-- 方式一：嵌套结果 -->
+	<select id="getClass" parameterType="int" resultMap="getClassMap">
+		select *
+		from class c,teacher t,student s where c.teacher_id=t.t_id and
+		c.c_id=s.class_id and c.c_id=#{id}
+	</select>
+	<resultMap type="com.bean.Classes" id="getClassMap">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />
+		<association property="teacher" javaType="com.bean.Teacher">
+			<id property="id" column="t_id" />
+			<result property="name" column="t_name" />
+		</association>
+		<collection property="students" ofType="com.bean.Student">
+			<id property="id" column="s_id" />
+			<result property="name" column="s_name" />
+		</collection>
+	</resultMap>
+
+
+
+	<!-- 方式二：执行多次查询 -->
+	<select id="getClass2" parameterType="int" resultMap="getClassMap2">
+		select *
+		from class where c_id=#{id}
+	</select>
+	<select id="getTeacher" parameterType="int" resultType="com.bean.Teacher">
+		select t_id id,t_name name 
+		from teacher where t_id=#{id}
+	</select>
+	<select id="getStudent" parameterType="int" resultType="com.bean.Student">
+		select
+		s_id id,s_name name
+		from student where class_id=#{id}
+	</select>
+	<resultMap type="com.bean.Classes" id="getClassMap2">
+		<id property="id" column="c_id" />
+		<result property="name" column="c_name" />	
+		<association property="teacher" column="teacher_id" select="getTeacher"></association>
+		<!-- column为什么是c_id?因为是从班级信息取班级的编号,再传入getStudent的语句 -->
+		<collection property="students" column="c_id" select="getStudent" ></collection>
+	</resultMap>
+	
+	<!-- 备注：一对多的查询
+		collection:做一对多查询时使用
+		ofType:指定集合中元素对象的类型
+	 -->
+</mapper>

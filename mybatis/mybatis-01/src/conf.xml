@@ -1,27 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-<!-- 
-	development : 开发模式
-	work : 工作模式
-	default="development" id="development" 需保持一致
- -->
+
+	<properties resource="db.properties"></properties>
+
+	<!-- 取别名 -->
+	<typeAliases>
+		<!-- 第一种方式：只写包名 ，那么查询返回的resultType直接写类名-->
+		<!-- <package name="com.test1" /> -->
+		<!-- 第二种方式：包名+类名 -->
+		<typeAlias type="com.bean.User" alias="_user" />
+		<typeAlias type="com.bean.Order" alias="_order"/>
+	</typeAliases>
+	
+	<!-- development : 开发模式 work : 工作模式 default="development" id="development" 
+		需保持一致 -->
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC" />
 			<dataSource type="POOLED">
-				<property name="driver" value="com.mysql.jdbc.Driver" />
-				<property name="url" value="jdbc:mysql://127.0.0.1:3306/study-mybatis" />
-				<property name="username" value="root" />
-				<property name="password" value="123" />
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
 			</dataSource>
 		</environment>
 	</environments>
+	
+	
 	<!-- 注册映射 -->
 	<mappers>
 		<mapper resource="com/test1/userMapper.xml" />
 		<mapper resource="com/test2/userMapper.xml" />
 		<!-- 使用注解的方式，也要进行注册 -->
-		<mapper class="com.test3.UserMapper"/>
-	</mappers>	
+		<mapper class="com.test3.UserMapper" />
+		<mapper resource="com/test4/orderMapper.xml" />
+		<mapper resource="com/test5/classMapper.xml" />
+		<mapper resource="com/test6/classMapper.xml" />
+		<mapper resource="com/test7/userMapper.xml" />
+		<mapper resource="com/test8/userMapper.xml" />
+		<mapper resource="com/test9/userMapper.xml" />
+	</mappers>
+
+
 </configuration>
