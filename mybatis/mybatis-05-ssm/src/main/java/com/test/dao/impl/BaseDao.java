@@ -5,6 +5,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BaseDao {
+
 	@Autowired
 	protected SqlSessionFactoryBean sqlsessionFactory;
 
