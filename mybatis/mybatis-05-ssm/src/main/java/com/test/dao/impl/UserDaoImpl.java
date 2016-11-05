@@ -1,24 +1,25 @@
 package com.test.dao.impl;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.test.dao.IUserDao;
+import com.test.entity.TeacherEntity;
 import com.test.entity.UserEntity;
 
-@Repository(value="userDao")
-public class UserDaoImpl extends BaseDao implements IUserDao {
+@Repository(value = "userDao")
+public class UserDaoImpl extends DaoBase implements IUserDao {
 
 	@Override
-	public void save(UserEntity entity) {
-		try {
-			SqlSession session = getSession();
-			session.insert("com.test.mapper.UserMapper.save", entity);
-			session.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	public int save(UserEntity entity) throws Exception {
+		return sessionTemplate.insert(userStatement.replace("{sqlId}", "save"), entity);
 	}
 
+	@Transactional
+	@Override
+	public void save(UserEntity entity, TeacherEntity teacherEntity) throws Exception {
+		sessionTemplate.insert(userStatement.replace("{sqlId}", "save"), entity);
+		sessionTemplate.insert(teacherStatement.replace("{sqlId}", "insertTeacher"), teacherEntity);
+
+	}
 }

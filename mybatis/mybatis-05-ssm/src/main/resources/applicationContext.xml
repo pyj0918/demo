@@ -44,6 +44,14 @@
 
 	<!-- 4.使用声明式事务 -->
 	<tx:annotation-driven transaction-manager="txManager" />
+
+	<!-- 5.使用sqlSessionTemplate -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+		<!-- 如果想要进行批量操作可加入这个属性 -->
+		<!-- SIMPLE REUSE BATCH -->
+		<constructor-arg index="1" value="REUSE" />
+	</bean>
 </beans>
 
 

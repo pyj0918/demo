@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.test.mapper.UserMapper">
-	<insert id="save" parameterType="UserEntity">
+	<insert id="save" parameterType="UserEntity" useGeneratedKeys="true" keyProperty="id">
 		insert into s_user (user_name,user_birthday,user_salary) values
 		(#{name},#{birthday},#{salary})
 	</insert>
