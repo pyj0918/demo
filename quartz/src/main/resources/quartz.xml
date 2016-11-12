@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="jobDetailFactoryParent" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" abstract="true">
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="cronTriggerBeanParent" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" abstract="true" />
+
+	<bean id="timer" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="task1Trigger" />
+			</list>
+		</property>
+		<property name="taskExecutor">
+			<bean class="java.util.concurrent.Executors" factory-method="newCachedThreadPool" />
+		</property>
+	</bean>
+
+
+	<bean id="task1Trigger" parent="cronTriggerBeanParent">
+		<property name="jobDetail" ref="task1" />
+		<!-- 每秒执行一次 -->
+		<property name="cronExpression" value="* * * * * ?" />
+	</bean>
+	<!-- 具体任务 -->
+	<bean id="task1" parent="jobDetailFactoryParent">
+		<property name="targetObject">
+			<bean class="com.quartz.Task1" />
+		</property>
+		<property name="targetMethod" value="exec" />
+	</bean>
+
+</beans>

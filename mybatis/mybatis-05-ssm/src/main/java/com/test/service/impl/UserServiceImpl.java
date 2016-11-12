@@ -22,6 +22,9 @@ public class UserServiceImpl extends ServiceBase implements IUserService {
 		}
 	}
 
+	/**
+	 * 注意点: 1. @Transactional注解起作用的方法必须是public类型   2.该方法必须抛出异常. 3.MySQL数据库类型的选择(InnoDB）
+	 */
 	@Transactional
 	@Override
 	public void saveUserAndTeacher() {
