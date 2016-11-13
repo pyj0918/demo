@@ -1,4 +1,4 @@
-package com.dm.single;
+package com.dm.cj.single;
 
 /**
  * 懒汉式单例模式2（要用的时候才去实例化） 多线程环境下的单例模式

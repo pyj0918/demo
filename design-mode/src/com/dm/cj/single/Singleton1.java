@@ -1,4 +1,4 @@
-package com.dm.single;
+package com.dm.cj.single;
 
 
 /**
