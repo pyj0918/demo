@@ -1,8 +1,8 @@
 package com.inner1;
 
 /**
- * 常规内部类
- * 应用场景：?
+ * 常规内部类 应用场景：可以让常规内部类私有化，限制在其它地方使用
+ * 
  * @author Administrator
  * 
  */
@@ -14,6 +14,7 @@ public class Out {
 	}
 
 	// 创建内部类
+	// 加入private 可以限制在其它地方使用
 	class Inner {
 		private String y = "hello";
 

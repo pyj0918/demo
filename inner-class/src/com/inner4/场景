@@ -1,0 +1,108 @@
+解决一些非面向对象的语句块
+这些语句块包括if…else if…else语句，case语句，等等。这些语句都不是面向对象的，给我们造成了系统的扩展上的麻烦。我们可以看看，在模式中，有多少模式是用来解决由if语句带来的扩展性的问题。
+Java编程中还有一个困扰我们的问题，那就是try…catch…问题，特别是在JDBC编程过程中。请看下面的代码：
+Java代码  收藏代码
+
+    try  
+             {  
+                    String[] divisionData = null;  
+                    conn = manager.getInstance().getConnection();  
+                    stmt = (OracleCallableStatement)conn.prepareCall("{ Call PM_GET_PRODUCT.HEADER_DIVISION(?, ?) }");  
+                    stmt.setLong(1 ,productId.longValue() );  
+                    stmt.registerOutParameter(2, oracle.jdbc.OracleTypes.CURSOR); ;  
+                    stmt.execute();  
+                    ResultSet rs = stmt.getCursor(2);  
+                    int i = 0 ;  
+                    String strDivision = "";  
+                    while( rs.next() )  
+                    {  
+                                 strDivision += rs.getString("DIVISION_ID") + "," ;  
+                      }  
+                      int length = strDivision.length() ;  
+                      if(length != 0 )  
+                      {  
+                             strDivision = strDivision.substring(0,length - 1);  
+                      }  
+                      divisionData = StringUtil.split(strDivision, ",") ;  
+                      map.put("Division", strDivision ) ;  
+                      LoggerAgent.debug("GetHeaderProcess","getDivisionData","getValue + " + strDivision +" " + productId) ;  
+           }catch(Exception e)  
+            {  
+                           LoggerAgent.error("GetHeaderData", "getDivisionData",  
+                                                         "SQLException: " + e);  
+                           e.printStackTrace() ;  
+       
+           }finally  
+            {  
+                           manager.close(stmt);  
+                           manager.releaseConnection(conn);  
+            }  
+
+
+这是我们最最常用的一个JDBC编程的代码示例。一个系统有很多这样的查询方法，这段代码一般分作三段：try关键字括起来的那段是用来做查询操作的，catch关键字括起来的那段需要做两件事，记录出错的原因和事务回滚（如果需要的话），finally关键字括起来的那段用来释放数据库连接。
+我们的烦恼是：try关键字括起来的那段是变化的，每个方法的一般都不一样。而 catch和finally关键字括起来的那两段却一般都是不变的，每个方法的那两段都是一样的。既然后面那两段是一样的，我们就非常希望将它们提取出来，做一个单独的方法，然后让每一个使用到它们的方法调用。但是，try…catch…finally…是一个完整的语句段，不能把它们分开。这样的结果，使得我们不得不在每一个数据层方法里重复的写相同的catch…finally…这两段语句。
+既然不能将那些讨厌的try…catch…finally…作为一个公用方法提出去，那么我们还是需要想其他的办法来解决这个问题。不然我们老是写那么重复代码，真是既繁琐，又不容易维护。
+我们容易想到，既然catch…finally…这两段代码不能提出来，那么我们能不能将try…里面的代码提出去呢？唉哟，try…里面的代码是可变的呢。怎么办？
+既然try…里面的代码是可变的，这意味着这些代码是可扩展的，是应该由用户来实现的，对于这样的可扩展内容，我们很容易想到用接口来定义它们，然后由用户去实现。这样以来我们首先定义一个接口：
+Java代码  收藏代码
+
+    public interface DataManager  
+    {  
+            public void manageData();  
+    }  
+
+
+我们需要用户在manageData()方法中实现他们对数据层访问的代码，也就是try…里面的代码。
+然后我们使用一个模板类来实现所有的try…catch…finally…语句的功能，如下：
+public class DataTemplate
+{
+        public void execute(DataManager dm)
+        {
+               try
+               {
+                      dm.manageData();
+}
+catch(Exception e)
+{
+       LoggerAgent.error("GetHeaderData", "getDivisionData",
+                        "SQLException: " + e);
+       e.printStackTrace() ;
+
+}finally
+{
+       manager.close(stmt);
+       manager.releaseConnection(conn);
+}
+}
+}
+这样，一个模板类就完成了。我们也通过这个模板类将catch…finally…两段代码提出来了。我们来看看使用了这个模板类的数据层方法是怎么实现的：
+new DataTemplate().execute(new DataManager()
+{
+        public void manageData()
+        {
+                String[] divisionData = null;
+                conn = manager.getInstance().getConnection();
+                stmt = (OracleCallableStatement)conn.prepareCall("{ Call PM_GET_PRODUCT.HEADER_DIVISION(?, ?) }");
+                stmt.setLong(1 ,productId.longValue() );
+                stmt.registerOutParameter(2, oracle.jdbc.OracleTypes.CURSOR); ;
+                stmt.execute();
+                ResultSet rs = stmt.getCursor(2);
+                int i = 0 ;
+                String strDivision = "";
+                while( rs.next() )
+                {
+                             strDivision += rs.getString("DIVISION_ID") + "," ;
+}
+                  int length = strDivision.length() ;
+                  if(length != 0 )
+                  {
+                         strDivision = strDivision.substring(0,length - 1);
+                  }
+                  divisionData = StringUtil.split(strDivision, ",") ;
+                  map.put("Division", strDivision ) ;
+                  LoggerAgent.debug("GetHeaderProcess","getDivisionData","getValue + " + strDivision +" " + productId) ;
+}
+});
+注意：本段代码仅供思路上的参考，没有经过上机测试。
+我们可以看到，正是这个实现了DataManager接口得匿名内部类的使用，才使得我们解决了对try…catch…finally…语句的改造。这样，第一为我们解决了令人痛苦的重复代码；第二也让我们在数据层方法的编码中，直接关注对数据的操作，不用关心那些必需的但是与数据操作无关的东西。
+我们现在来回想一下Spring框架的数据层，是不是正是使用了这种方法呢？ 

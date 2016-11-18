@@ -1,0 +1,88 @@
+当某个类除了它的外部类，不再被其他的类使用时:
+我们说这个内部类依附于它的外部类而存在，可能的原因有：1、不可能为其他的类使用；2、出于某种原因，不能被其他类引用，可能会引起错误。等等。这个场景是我们使用内部类比较多的一个场景。下面我们以一个大家熟悉的例子来说明。
+在我们的企业级Java项目开发过程中，数据库连接池是一个我们经常要用到的概念。虽然在很多时候，我们都是用的第三方的数据库连接池，不需要我们亲自来做这个数据库连接池。但是，作为我们Java内部类使用的第一个场景，这个数据库连接池是一个很好的例子。为了简单起见，以下我们就来简单的模拟一下数据库连接池，在我们的例子中，我们只实现数据库连接池的一些简单的功能。如果想完全实现它，大家不妨自己试一试。
+首先，我们定义一个接口，将数据库连接池的功能先定义出来，如下：
+Java代码  收藏代码
+
+    public interface Pool extends TimerListener  
+    {  
+            //初始化连接池  
+            public boolean init();  
+            //销毁连接池  
+            public void destory();  
+            //取得一个连接  
+            public Connection getConn();  
+            //还有一些其他的功能，这里不再列出  
+            ……  
+    }  
+
+
+有了这个功能接口，我们就可以在它的基础上实现数据库连接池的部分功能了。我们首先想到这个数据库连接池类的操作对象应该是由Connection对象组成的一个数组，既然是数组，我们的池在取得Connection的时候，就要对数组元素进行遍历，看看Connection对象是否已经被使用，所以数组里每一个Connection对象都要有一个使用标志。我们再对连接池的功能进行分析，会发现每一个Connection对象还要一个上次访问时间和使用次数。
+通过上面的分析，我们可以得出，连接池里的数组的元素应该是由对象组成，该对象的类可能如下：
+Java代码  收藏代码
+
+    public class PoolConn  
+    {  
+            private Connection conn;  
+            private boolean isUse;  
+            private long lastAccess;  
+            private int useCount;  
+            ……  
+    }  
+
+
+下面的省略号省掉的是关于四个属性的一些get和set方法。我们可以看到这个类的核心就是Connection，其他的一些属性都是Connection的一些标志。可以说这个类只有在连接池这个类里有用，其他地方用不到。这时候，我们就该考虑是不是可以把这个类作为一个内部类呢？而且我们把它作为一个内部类以后，可以把它定义成一个私有类，然后将它的属性公开，这样省掉了那些无谓的get和set方法。下面我们就试试看：
+Java代码  收藏代码
+
+    public class ConnectPool implements Pool  
+    {  
+            //存在Connection的数组  
+            private PoolConn[] poolConns;  
+            //连接池的最小连接数  
+            private int min;  
+            //连接池的最大连接数  
+            private int max;  
+            //一个连接的最大使用次数  
+            private int maxUseCount;  
+            //一个连接的最大空闲时间  
+            private long maxTimeout;  
+            //同一时间的Connection最大使用个数  
+            private int maxConns;  
+            //定时器  
+            private Timer timer;  
+            public boolean init()  
+            {  
+                   try  
+                   {  
+                          ……  
+                          this.poolConns = new PoolConn[this.min];  
+                          for(int i=0;i<this.min;i++)  
+                          {  
+                                 PoolConn poolConn = new PoolConn();  
+                                 poolConn.conn = ConnectionManager.getConnection();  
+                                 poolConn.isUse = false;  
+                                 poolConn.lastAccess = new Date().getTime();  
+                                 poolConn.useCount = 0;  
+                                 this.poolConns[i] = poolConn;  
+    }  
+    ……  
+    return true;  
+                   }  
+                   catch(Exception e)  
+                   {  
+                          return false;  
+    }  
+    }  
+    ……  
+    private class PoolConn  
+    {  
+           public Connection conn;  
+           public boolean isUse;  
+    public long lastAccess;  
+           public int useCount;  
+    }  
+    }  
+
+
+因为本文不是专题来讲述数据库连接池的，所以在上面的代码中绝大部分的内容被省略掉了。PoolConn类不大可能被除了ConnectionPool类的其他类使用到，把它作为ConnectionPool的私有内部类不会影响到其他类。同时，我们可以看到，使用了内部类，使得我们可以将该内部类的数据公开，ConnectionPool类可以直接操作PoolConn类的数据成员，避免了因set和get方法带来的麻烦。
+上面的一个例子，是使用内部类使得你的代码得到简化和方便。还有些情况下，你可能要避免你的类被除了它的外部类以外的类使用到，这时候你却不得不使用内部类来解决问题。 
