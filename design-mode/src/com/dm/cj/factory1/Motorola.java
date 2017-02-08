@@ -4,7 +4,7 @@ public class Motorola implements IMobile{
 
 	@Override
 	public void call() {
-		System.out.println("motorolaÊÖ»ú");
+		System.out.println("motorola");
 		
 	}
 
