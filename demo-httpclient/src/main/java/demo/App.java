@@ -23,36 +23,7 @@ public class App {
 
 	public static void main(String[] args) throws MalformedURLException, InterruptedException {
 
-		//		for (int i = 0; i < 2200; i++) {
-		//			Thread thread = new Thread(new Runnable() {
-		//				@Override
-		//				public void run() {
-		//					HttpClientUtil2.get("https://www.baidu.com");
-		//					System.out.println(Thread.currentThread().getName());
-		//				}
-		//			});
-		//			thread.start();
-		//		}
-		//HttpClientUtil2.get("https://www.baidu.com");
-
-		//get();
-
-		for (int i = 0; i < 1000; i++) {
-			Thread t = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						Date d = df.get().parse("2018-05-16 11:10:10");
-						System.out.println(d);
-					} catch (ParseException e) {
-						//e.printStackTrace();
-					}
-				}
-
-			});
-			t.start();
-		}
+	
 
 	}
 
