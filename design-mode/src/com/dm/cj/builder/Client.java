@@ -1,5 +1,6 @@
 package com.dm.cj.builder;
 
+//参考：https://www.jianshu.com/p/be290ccea05a
 public class Client {
 	public static void main(String[] args) {
 		// 创造车间及指挥者

@@ -1,0 +1,7 @@
+server:
+  port: 8400
+  context-path: /demo_api_inst
+logging:
+  level:
+    com.ylink: debug
+
